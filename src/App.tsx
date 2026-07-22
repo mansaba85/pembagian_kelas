@@ -83,6 +83,9 @@ export default function App() {
 
   useEffect(() => {
     saveSettings(settings);
+    if (settings.namaSekolah) {
+      document.title = `Sistem Pengumuman Pembagian Kelas - ${settings.namaSekolah}`;
+    }
   }, [settings]);
 
   // Handlers for Students

@@ -1,3 +1,6 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -9,7 +12,7 @@ const __dirname = path.dirname(__filename);
 
 async function startServer() {
   const app = express();
-  const PORT = Number(process.env.PORT) || 3000;
+  const PORT = Number(process.env.PORT) || 5003;
 
   app.use(express.json());
 

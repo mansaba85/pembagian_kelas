@@ -6,14 +6,10 @@ export function getDbPool() {
   if (pool) return pool;
 
   const host = process.env.DB_HOST || 'localhost';
-  const user = process.env.DB_USER;
+  const user = process.env.DB_USER || 'root';
   const password = process.env.DB_PASSWORD || '';
   const database = process.env.DB_NAME || 'db_pengumuman';
   const port = Number(process.env.DB_PORT) || 3306;
-
-  if (!user) {
-    return null;
-  }
 
   pool = mysql.createPool({
     host,
@@ -31,18 +27,15 @@ export function getDbPool() {
 
 export async function initMySQLDatabase() {
   const host = process.env.DB_HOST || 'localhost';
-  const user = process.env.DB_USER;
+  const user = process.env.DB_USER || 'root';
   const password = process.env.DB_PASSWORD || '';
   const database = process.env.DB_NAME || 'db_pengumuman';
   const port = Number(process.env.DB_PORT) || 3306;
 
-  if (!user) {
-    console.log('ℹ️ DB_USER env not set. Skipping automatic MySQL table creation.');
-    return false;
-  }
+  console.log(`🔍 Trying to connect to MySQL database '${database}' on ${host}:${port} as user '${user}'...`);
 
+  // Step 1: Try creating database if user has permission
   try {
-    // Connect without database selected first to ensure DB exists
     const rootConnection = await mysql.createConnection({
       host,
       user,
@@ -52,9 +45,17 @@ export async function initMySQLDatabase() {
 
     await rootConnection.query(`CREATE DATABASE IF NOT EXISTS \`${database}\` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;`);
     await rootConnection.end();
+  } catch (err: any) {
+    console.warn(`⚠️ Warning during CREATE DATABASE check (database may already exist or user lacks CREATE DATABASE privilege): ${err.message}`);
+  }
 
+  // Step 2: Connect directly to the database & create tables
+  try {
     const db = getDbPool();
-    if (!db) return false;
+    if (!db) {
+      console.error('❌ Could not create MySQL connection pool.');
+      return false;
+    }
 
     // Table: kelas
     await db.query(`
