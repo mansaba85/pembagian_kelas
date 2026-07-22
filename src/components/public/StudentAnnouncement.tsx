@@ -187,7 +187,7 @@ export const StudentAnnouncement: React.FC<StudentAnnouncementProps> = ({
                       type="text"
                       value={searchInput}
                       onChange={(e) => setSearchInput(e.target.value)}
-                      placeholder="Contoh: DU-2026-001 atau 320102150..."
+                      placeholder="Contoh: DU-A/001 atau 320102150..."
                       className="w-full bg-slate-900 border-2 border-slate-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 text-white placeholder-slate-500 rounded-xl px-4 py-3.5 pr-28 font-mono text-sm sm:text-base uppercase tracking-wider outline-hidden transition-all"
                     />
                     <button
