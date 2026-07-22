@@ -14,8 +14,8 @@ export const AdminLoginModal: React.FC<AdminLoginModalProps> = ({
   onLoginSuccess,
   onClose
 }) => {
-  const [username, setUsername] = useState('admin');
-  const [password, setPassword] = useState('admin123');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -97,16 +97,6 @@ export const AdminLoginModal: React.FC<AdminLoginModalProps> = ({
             </div>
           </div>
 
-          {/* Quick Demo Hint */}
-          <div className="p-3 rounded-xl bg-slate-800/80 border border-slate-700 text-xs text-slate-300 space-y-1">
-            <p className="font-semibold text-emerald-400 flex items-center gap-1">
-              <ShieldCheck className="w-4 h-4" />
-              <span>Akses Demo Langsung:</span>
-            </p>
-            <p className="text-[11px] text-slate-400">
-              Username: <code className="bg-slate-950 px-1.5 py-0.5 rounded text-emerald-300 font-mono">admin</code> | Sandi: <code className="bg-slate-950 px-1.5 py-0.5 rounded text-emerald-300 font-mono">admin123</code>
-            </p>
-          </div>
 
           <button
             type="submit"
