@@ -1,44 +1,40 @@
--- File Schema MySQL untuk Sistem Pengumuman Pembagian Kelas
+-- File Schema MySQL untuk Sistem Pengumuman Pembagian Kelas MA NU 01 BANYUPUTIH
 -- Dapat di-import langsung di phpMyAdmin aaPanel jika dibutuhkan
 
-CREATE DATABASE IF NOT EXISTS `db_pengumuman` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE `db_pengumuman`;
+CREATE DATABASE IF NOT EXISTS `kelasku_db` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE `kelasku_db`;
 
 -- Tabel: kelas
 CREATE TABLE IF NOT EXISTS `kelas` (
-  `id` VARCHAR(50) NOT NULL PRIMARY KEY,
-  `nama` VARCHAR(100) NOT NULL,
-  `tingkat` VARCHAR(20) NOT NULL,
-  `jurusan` VARCHAR(50) NOT NULL,
-  `waliKelas` VARCHAR(100),
-  `kapasitas` INT DEFAULT 36,
-  `kuotaTerisi` INT DEFAULT 0,
-  `ruang` VARCHAR(100)
+  `id` VARCHAR(100) NOT NULL PRIMARY KEY,
+  `namaKelas` VARCHAR(100) NOT NULL,
+  `ruang` VARCHAR(100),
+  `waliKelas` VARCHAR(150),
+  `nipWaliKelas` VARCHAR(100),
+  `kuota` INT DEFAULT 36,
+  `keterangan` TEXT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Tabel: siswa
 CREATE TABLE IF NOT EXISTS `siswa` (
-  `id` VARCHAR(50) NOT NULL PRIMARY KEY,
-  `nomorDaftarUlang` VARCHAR(100) NOT NULL UNIQUE,
+  `id` VARCHAR(100) NOT NULL PRIMARY KEY,
+  `nomorDU` VARCHAR(100) NOT NULL,
   `nik` VARCHAR(50) NOT NULL,
   `nama` VARCHAR(150) NOT NULL,
-  `jenisKelamin` VARCHAR(20) NOT NULL,
+  `jenisKelamin` VARCHAR(10) NOT NULL,
   `tempatLahir` VARCHAR(100),
   `tanggalLahir` VARCHAR(50),
-  `asalSekolah` VARCHAR(150),
-  `namaOrangTua` VARCHAR(150),
-  `nomorHp` VARCHAR(50),
-  `kelasId` VARCHAR(50),
-  `namaKelas` VARCHAR(100),
-  `statusPengumuman` VARCHAR(50) DEFAULT 'Sudah Diumumkan'
+  `kelas` VARCHAR(100),
+  `catatan` TEXT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Tabel: pengguna
 CREATE TABLE IF NOT EXISTS `pengguna` (
-  `id` VARCHAR(50) NOT NULL PRIMARY KEY,
+  `id` VARCHAR(100) NOT NULL PRIMARY KEY,
   `nama` VARCHAR(150) NOT NULL,
   `username` VARCHAR(100) NOT NULL UNIQUE,
-  `password` VARCHAR(255) NOT NULL,
+  `password` VARCHAR(255),
+  `email` VARCHAR(150),
   `role` VARCHAR(50) NOT NULL,
   `status` VARCHAR(20) DEFAULT 'Aktif',
   `terakhirLogin` VARCHAR(100)
@@ -46,31 +42,20 @@ CREATE TABLE IF NOT EXISTS `pengguna` (
 
 -- Tabel: pengaturan
 CREATE TABLE IF NOT EXISTS `pengaturan` (
-  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `id` INT PRIMARY KEY DEFAULT 1,
   `namaSekolah` VARCHAR(200),
+  `npsn` VARCHAR(50),
+  `alamatSekolah` TEXT,
+  `telepon` VARCHAR(100),
+  `emailSekolah` VARCHAR(100),
+  `website` VARCHAR(150),
   `tahunAjaran` VARCHAR(50),
   `statusPengumuman` TINYINT(1) DEFAULT 1,
-  `pesanSistem` TEXT,
-  `nomorSurat` VARCHAR(100),
-  `headerKop1` VARCHAR(200),
-  `headerKop2` VARCHAR(200),
-  `alamatSekolah` TEXT,
-  `kontakSekolah` VARCHAR(100),
-  `emailSekolah` VARCHAR(100),
-  `websiteSekolah` VARCHAR(150),
+  `pesanPengumumanTutup` TEXT,
+  `pesanSambutan` TEXT,
   `namaKepalaSekolah` VARCHAR(150),
   `nipKepalaSekolah` VARCHAR(100),
-  `namaKetuaPanitia` VARCHAR(150),
-  `nipKetuaPanitia` VARCHAR(100),
-  `tanggalPengumuman` VARCHAR(100)
+  `tanggalPengumuman` VARCHAR(100),
+  `kotaSekolah` VARCHAR(100),
+  `logoSekolah` LONGTEXT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- Data Awal Pengguna (Default Admin: username admin, password admin123)
-INSERT IGNORE INTO `pengguna` (`id`, `nama`, `username`, `password`, `role`, `status`, `terakhirLogin`)
-VALUES ('usr-1', 'Administrator Utama', 'admin', 'admin123', 'Super Admin', 'Aktif', 'Baru Saja');
-
--- Data Awal Pengaturan
-INSERT IGNORE INTO `pengaturan` 
-(`id`, `namaSekolah`, `tahunAjaran`, `statusPengumuman`, `pesanSistem`, `nomorSurat`, `headerKop1`, `headerKop2`, `alamatSekolah`, `kontakSekolah`, `emailSekolah`, `websiteSekolah`, `namaKepalaSekolah`, `nipKepalaSekolah`, `namaKetuaPanitia`, `nipKetuaPanitia`, `tanggalPengumuman`)
-VALUES 
-(1, 'MA NU 01 BANYUPUTIH', '2026/2027', 1, 'Pengumuman pembagian kelas siswa baru telah resmi dibuka.', '421.3/PAN-PPDB/2026005/2026', 'YAYASAN PENDIDIKAN MA NU 01 BANYUPUTIH', 'PENERIMAAN PESERTA DIDIK BARU (PPDB)', 'Jl. Merdeka No. 45, Kecamatan Nusantara, Kota Pendidikan, Jawa Barat', '(021) 7890-1234', 'info@sman1garuda.sch.id', 'www.sman1garuda.sch.id', 'H. Ahmad Syukri, S.Pd., M.Pd.', '19750812 200003 1 002', 'Siti Nurhaliza, S.E., M.Pd.', '19820415 200801 2 005', '22 Juli 2026');

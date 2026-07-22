@@ -71,6 +71,49 @@ export async function initMySQLDatabase() {
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
     `);
 
+    // Helper for column auto-migration
+    const ensureColumnExists = async (table: string, column: string, definition: string) => {
+      try {
+        const [cols]: any = await db.query(
+          `SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ? AND COLUMN_NAME = ?`,
+          [table, column]
+        );
+        if (!cols || cols.length === 0) {
+          console.log(`🔧 Auto-migrating table '${table}': adding missing column '${column}'...`);
+          await db.query(`ALTER TABLE \`${table}\` ADD COLUMN \`${column}\` ${definition}`);
+        }
+      } catch (err: any) {
+        console.warn(`⚠️ Warning auto-migrating ${column} in ${table}:`, err.message);
+      }
+    };
+
+    // Auto-migrate column renames if older schema exists
+    try {
+      const [oldKelasNameCols]: any = await db.query(
+        `SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'kelas' AND COLUMN_NAME = 'nama'`
+      );
+      if (oldKelasNameCols && oldKelasNameCols.length > 0) {
+        await db.query(`ALTER TABLE \`kelas\` CHANGE COLUMN \`nama\` \`namaKelas\` VARCHAR(100) NOT NULL`);
+      }
+    } catch (e) {}
+
+    try {
+      const [oldSiswaDuCols]: any = await db.query(
+        `SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'siswa' AND COLUMN_NAME = 'nomorDaftarUlang'`
+      );
+      if (oldSiswaDuCols && oldSiswaDuCols.length > 0) {
+        await db.query(`ALTER TABLE \`siswa\` CHANGE COLUMN \`nomorDaftarUlang\` \`nomorDU\` VARCHAR(100) NOT NULL`);
+      }
+    } catch (e) {}
+
+    // Ensure all required columns exist in kelas
+    await ensureColumnExists('kelas', 'namaKelas', 'VARCHAR(100) NOT NULL DEFAULT \'\'');
+    await ensureColumnExists('kelas', 'ruang', 'VARCHAR(100)');
+    await ensureColumnExists('kelas', 'waliKelas', 'VARCHAR(150)');
+    await ensureColumnExists('kelas', 'nipWaliKelas', 'VARCHAR(100)');
+    await ensureColumnExists('kelas', 'kuota', 'INT DEFAULT 36');
+    await ensureColumnExists('kelas', 'keterangan', 'TEXT');
+
     // Table: siswa
     await db.query(`
       CREATE TABLE IF NOT EXISTS \`siswa\` (
@@ -86,6 +129,16 @@ export async function initMySQLDatabase() {
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
     `);
 
+    // Ensure all required columns exist in siswa
+    await ensureColumnExists('siswa', 'nomorDU', 'VARCHAR(100) NOT NULL DEFAULT \'\'');
+    await ensureColumnExists('siswa', 'nik', 'VARCHAR(50) NOT NULL DEFAULT \'\'');
+    await ensureColumnExists('siswa', 'nama', 'VARCHAR(150) NOT NULL DEFAULT \'\'');
+    await ensureColumnExists('siswa', 'jenisKelamin', 'VARCHAR(10) NOT NULL DEFAULT \'L\'');
+    await ensureColumnExists('siswa', 'tempatLahir', 'VARCHAR(100)');
+    await ensureColumnExists('siswa', 'tanggalLahir', 'VARCHAR(50)');
+    await ensureColumnExists('siswa', 'kelas', 'VARCHAR(100)');
+    await ensureColumnExists('siswa', 'catatan', 'TEXT');
+
     // Table: pengguna
     await db.query(`
       CREATE TABLE IF NOT EXISTS \`pengguna\` (
@@ -99,6 +152,15 @@ export async function initMySQLDatabase() {
         \`terakhirLogin\` VARCHAR(100)
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
     `);
+
+    // Ensure all required columns exist in pengguna
+    await ensureColumnExists('pengguna', 'nama', 'VARCHAR(150) NOT NULL DEFAULT \'\'');
+    await ensureColumnExists('pengguna', 'username', 'VARCHAR(100) NOT NULL DEFAULT \'admin\'');
+    await ensureColumnExists('pengguna', 'password', 'VARCHAR(255)');
+    await ensureColumnExists('pengguna', 'email', 'VARCHAR(150)');
+    await ensureColumnExists('pengguna', 'role', 'VARCHAR(50) NOT NULL DEFAULT \'Super Admin\'');
+    await ensureColumnExists('pengguna', 'status', 'VARCHAR(20) DEFAULT \'Aktif\'');
+    await ensureColumnExists('pengguna', 'terakhirLogin', 'VARCHAR(100)');
 
     // Table: pengaturan
     await db.query(`
@@ -121,6 +183,23 @@ export async function initMySQLDatabase() {
         \`logoSekolah\` LONGTEXT
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
     `);
+
+    // Ensure all required columns exist in pengaturan
+    await ensureColumnExists('pengaturan', 'namaSekolah', 'VARCHAR(200)');
+    await ensureColumnExists('pengaturan', 'npsn', 'VARCHAR(50)');
+    await ensureColumnExists('pengaturan', 'alamatSekolah', 'TEXT');
+    await ensureColumnExists('pengaturan', 'telepon', 'VARCHAR(100)');
+    await ensureColumnExists('pengaturan', 'emailSekolah', 'VARCHAR(100)');
+    await ensureColumnExists('pengaturan', 'website', 'VARCHAR(150)');
+    await ensureColumnExists('pengaturan', 'tahunAjaran', 'VARCHAR(50)');
+    await ensureColumnExists('pengaturan', 'statusPengumuman', 'TINYINT(1) DEFAULT 1');
+    await ensureColumnExists('pengaturan', 'pesanPengumumanTutup', 'TEXT');
+    await ensureColumnExists('pengaturan', 'pesanSambutan', 'TEXT');
+    await ensureColumnExists('pengaturan', 'namaKepalaSekolah', 'VARCHAR(150)');
+    await ensureColumnExists('pengaturan', 'nipKepalaSekolah', 'VARCHAR(100)');
+    await ensureColumnExists('pengaturan', 'tanggalPengumuman', 'VARCHAR(100)');
+    await ensureColumnExists('pengaturan', 'kotaSekolah', 'VARCHAR(100)');
+    await ensureColumnExists('pengaturan', 'logoSekolah', 'LONGTEXT');
 
     // Seed classes if empty
     const [clsRows]: any = await db.query(`SELECT COUNT(*) as count FROM \`kelas\`;`);
