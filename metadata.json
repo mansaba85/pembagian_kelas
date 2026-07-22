@@ -1,0 +1,6 @@
+{
+  "name": "Sistem Pembagian Kelas Siswa",
+  "description": "Sistem pengumuman pembagian kelas siswa baru MA NU 01 Banyuputih berbasis nomor DU dan portal admin lengkap.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
