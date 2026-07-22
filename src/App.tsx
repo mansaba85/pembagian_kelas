@@ -12,6 +12,7 @@ import {
   saveSettings,
   resetToDefaultData
 } from './lib/storage';
+import { fetchStudents, addStudent } from './lib/api';
 
 // Public Components
 import { StudentAnnouncement } from './components/public/StudentAnnouncement';
@@ -34,7 +35,7 @@ export default function App() {
   const navigate = useNavigate();
 
   // Load persistent state
-  const [students, setStudents] = useState<Student[]>(() => loadStudents());
+  const [students, setStudents] = useState<Student[]>([]);
   const [classes, setClasses] = useState<ClassData[]>(() => loadClasses());
   const [users, setUsers] = useState<UserAdmin[]>(() => loadUsers());
   const [settings, setSettings] = useState<AppSettings>(() => loadSettings());
@@ -88,9 +89,18 @@ export default function App() {
     }
   }, [settings]);
 
+  useEffect(() => {
+    fetchStudents().then(setStudents).catch(console.error);
+  }, []);
+
   // Handlers for Students
-  const handleAddStudent = (newStudent: Student) => {
-    setStudents(prev => [newStudent, ...prev]);
+  const handleAddStudent = async (newStudent: Student) => {
+    try {
+      await addStudent(newStudent);
+      setStudents(prev => [newStudent, ...prev]);
+    } catch (e) {
+      console.error('Failed to add student to backend', e);
+    }
   };
 
   const handleUpdateStudent = (updatedStudent: Student) => {

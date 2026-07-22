@@ -5,7 +5,7 @@ import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { createServer as createViteServer } from 'vite';
-import { initMySQLDatabase } from './src/db/mysql.js';
+import { initMySQLDatabase, getDbPool } from './src/db/mysql.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -26,6 +26,27 @@ async function startServer() {
       service: 'Sistem Pengumuman Pembagian Kelas',
       timestamp: new Date().toISOString(),
     });
+  });
+
+  app.get("/api/students", async (req, res) => {
+    try {
+      const db = getDbPool();
+      const [rows] = await db.query("SELECT * FROM `siswa`");
+      res.json(rows);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch students" });
+    }
+  });
+
+  app.post("/api/students", async (req, res) => {
+    try {
+      const db = getDbPool();
+      const student = req.body;
+      await db.query("INSERT INTO `siswa` SET ?", student);
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to add student" });
+    }
   });
 
   // Vite middleware for dev mode vs static serve for production mode
