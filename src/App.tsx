@@ -12,7 +12,25 @@ import {
   saveSettings,
   resetToDefaultData
 } from './lib/storage';
-import { fetchStudents, addStudent } from './lib/api';
+import { 
+  fetchStudents, 
+  apiAddStudent, 
+  apiUpdateStudent, 
+  apiDeleteStudent, 
+  apiBulkDeleteStudents, 
+  apiImportStudents,
+  fetchClasses,
+  apiAddClass,
+  apiUpdateClass,
+  apiDeleteClass,
+  fetchUsers,
+  apiAddUser,
+  apiUpdateUser,
+  apiDeleteUser,
+  fetchSettings,
+  apiSaveSettings,
+  apiResetDatabase
+} from './lib/api';
 
 // Public Components
 import { StudentAnnouncement } from './components/public/StudentAnnouncement';
@@ -36,8 +54,8 @@ export default function App() {
 
   // Load persistent state
   const [students, setStudents] = useState<Student[]>([]);
-  const [classes, setClasses] = useState<ClassData[]>(() => loadClasses());
-  const [users, setUsers] = useState<UserAdmin[]>(() => loadUsers());
+  const [classes, setClasses] = useState<ClassData[]>([]);
+  const [users, setUsers] = useState<UserAdmin[]>([]);
   const [settings, setSettings] = useState<AppSettings>(() => loadSettings());
 
   // View & Authentication state
@@ -69,7 +87,7 @@ export default function App() {
     }
   }, [isAdminRoute, isLoggedIn]);
 
-  // Persist edits to localStorage whenever state updates
+  // Sync state to localStorage as secondary backup
   useEffect(() => {
     saveStudents(students);
   }, [students]);
@@ -89,65 +107,135 @@ export default function App() {
     }
   }, [settings]);
 
+  // Initial load from MySQL backend
   useEffect(() => {
-    fetchStudents().then(setStudents).catch(console.error);
+    fetchStudents()
+      .then(res => { if (Array.isArray(res)) setStudents(res); })
+      .catch(() => setStudents(loadStudents()));
+
+    fetchClasses()
+      .then(res => { if (Array.isArray(res)) setClasses(res); })
+      .catch(() => setClasses(loadClasses()));
+
+    fetchUsers()
+      .then(res => { if (Array.isArray(res)) setUsers(res); })
+      .catch(() => setUsers(loadUsers()));
+
+    fetchSettings()
+      .then(res => { if (res && res.namaSekolah) setSettings(res); })
+      .catch(() => setSettings(loadSettings()));
   }, []);
 
   // Handlers for Students
   const handleAddStudent = async (newStudent: Student) => {
+    setStudents(prev => [newStudent, ...prev]);
     try {
-      await addStudent(newStudent);
-      setStudents(prev => [newStudent, ...prev]);
+      await apiAddStudent(newStudent);
     } catch (e) {
       console.error('Failed to add student to backend', e);
     }
   };
 
-  const handleUpdateStudent = (updatedStudent: Student) => {
+  const handleUpdateStudent = async (updatedStudent: Student) => {
     setStudents(prev => prev.map(s => s.id === updatedStudent.id ? updatedStudent : s));
+    try {
+      await apiUpdateStudent(updatedStudent);
+    } catch (e) {
+      console.error('Failed to update student in backend', e);
+    }
   };
 
-  const handleDeleteStudent = (id: string) => {
+  const handleDeleteStudent = async (id: string) => {
     setStudents(prev => prev.filter(s => s.id !== id));
+    try {
+      await apiDeleteStudent(id);
+    } catch (e) {
+      console.error('Failed to delete student in backend', e);
+    }
   };
 
-  const handleBulkDeleteStudents = (ids: string[]) => {
+  const handleBulkDeleteStudents = async (ids: string[]) => {
     setStudents(prev => prev.filter(s => !ids.includes(s.id)));
+    try {
+      await apiBulkDeleteStudents(ids);
+    } catch (e) {
+      console.error('Failed to bulk delete students in backend', e);
+    }
   };
 
-  const handleImportExcelSuccess = (imported: Student[]) => {
+  const handleImportExcelSuccess = async (imported: Student[]) => {
     setStudents(prev => [...imported, ...prev]);
+    try {
+      await apiImportStudents(imported);
+    } catch (e) {
+      console.error('Failed to import students to backend', e);
+    }
   };
 
   // Handlers for Classes
-  const handleAddClass = (newCls: ClassData) => {
+  const handleAddClass = async (newCls: ClassData) => {
     setClasses(prev => [...prev, newCls]);
+    try {
+      await apiAddClass(newCls);
+    } catch (e) {
+      console.error('Failed to add class to backend', e);
+    }
   };
 
-  const handleUpdateClass = (updatedCls: ClassData) => {
+  const handleUpdateClass = async (updatedCls: ClassData) => {
     setClasses(prev => prev.map(c => c.id === updatedCls.id ? updatedCls : c));
+    try {
+      await apiUpdateClass(updatedCls);
+    } catch (e) {
+      console.error('Failed to update class in backend', e);
+    }
   };
 
-  const handleDeleteClass = (id: string) => {
+  const handleDeleteClass = async (id: string) => {
     setClasses(prev => prev.filter(c => c.id !== id));
+    try {
+      await apiDeleteClass(id);
+    } catch (e) {
+      console.error('Failed to delete class in backend', e);
+    }
   };
 
   // Handlers for Users
-  const handleAddUser = (newUser: UserAdmin) => {
+  const handleAddUser = async (newUser: UserAdmin) => {
     setUsers(prev => [...prev, newUser]);
+    try {
+      await apiAddUser(newUser);
+    } catch (e) {
+      console.error('Failed to add user to backend', e);
+    }
   };
 
-  const handleUpdateUser = (updatedUser: UserAdmin) => {
+  const handleUpdateUser = async (updatedUser: UserAdmin) => {
     setUsers(prev => prev.map(u => u.id === updatedUser.id ? updatedUser : u));
+    try {
+      await apiUpdateUser(updatedUser);
+    } catch (e) {
+      console.error('Failed to update user in backend', e);
+    }
   };
 
-  const handleDeleteUser = (id: string) => {
+  const handleDeleteUser = async (id: string) => {
     setUsers(prev => prev.filter(u => u.id !== id));
+    try {
+      await apiDeleteUser(id);
+    } catch (e) {
+      console.error('Failed to delete user in backend', e);
+    }
   };
 
   // Handlers for Settings
-  const handleSaveSettings = (newSettings: AppSettings) => {
+  const handleSaveSettings = async (newSettings: AppSettings) => {
     setSettings(newSettings);
+    try {
+      await apiSaveSettings(newSettings);
+    } catch (e) {
+      console.error('Failed to save settings in backend', e);
+    }
   };
 
   const handleToggleStatusPengumuman = async () => {
@@ -162,18 +250,37 @@ export default function App() {
     });
 
     if (confirmed) {
-      setSettings(prev => ({ ...prev, statusPengumuman: newStatus }));
+      const updated = { ...settings, statusPengumuman: newStatus };
+      setSettings(updated);
+      try {
+        await apiSaveSettings(updated);
+      } catch (e) {
+        console.error('Failed to toggle status pengumuman', e);
+      }
       showSuccessToast(`Akses pengumuman siswa berhasil ${newStatus ? 'DIBUKA' : 'DITUTUP'}.`);
     }
   };
 
   // Reset Data to Default Initial Sample
-  const handleResetData = () => {
+  const handleResetData = async () => {
     resetToDefaultData();
-    setStudents(loadStudents());
-    setClasses(loadClasses());
-    setUsers(loadUsers());
-    setSettings(loadSettings());
+    try {
+      await apiResetDatabase();
+      const stds = await fetchStudents();
+      const clss = await fetchClasses();
+      const usrs = await fetchUsers();
+      const stgs = await fetchSettings();
+      setStudents(stds);
+      setClasses(clss);
+      setUsers(usrs);
+      setSettings(stgs);
+    } catch (e) {
+      console.error('Failed to reset database', e);
+      setStudents(loadStudents());
+      setClasses(loadClasses());
+      setUsers(loadUsers());
+      setSettings(loadSettings());
+    }
   };
 
   // Login & Logout
