@@ -91,7 +91,8 @@ export const DataSiswa: React.FC<DataSiswaProps> = ({
   // Open Modal Add
   const handleOpenAdd = () => {
     setEditingStudent(null);
-    setNomorDU(`DU-2026-${String(students.length + 1).padStart(3, '0')}`);
+    // Default format: DU-A/001
+    setNomorDU(`DU-A/${String(students.length + 1).padStart(3, '0')}`);
     setNik('320102' + Math.floor(1000000000 + Math.random() * 9000000000));
     setNama('');
     setJenisKelamin('L');
@@ -423,7 +424,9 @@ export const DataSiswa: React.FC<DataSiswaProps> = ({
                     required
                     value={nomorDU}
                     onChange={(e) => setNomorDU(e.target.value)}
-                    placeholder="DU-2026-001"
+                    placeholder="DU-A/001"
+                    pattern="DU-[A-C]/\d{3}"
+                    title="Format harus DU-A/001, DU-B/001, atau DU-C/001"
                     className="w-full border border-slate-300 focus:border-emerald-500 rounded-xl px-3 py-2 text-xs font-mono font-bold text-slate-900 outline-hidden uppercase"
                   />
                 </div>

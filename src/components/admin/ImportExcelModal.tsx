@@ -33,7 +33,7 @@ export const ImportExcelModal: React.FC<ImportExcelModalProps> = ({
   const handleDownloadTemplate = () => {
     const templateData = [
       {
-        'Nomor DU': 'DU-2026-099',
+        'Nomor DU': 'DU-A/001',
         'Nama Lengkap': 'Rizky Ramadhan',
         'Jenis Kelamin': 'L',
         'Tempat Lahir': 'Jakarta',
@@ -43,7 +43,7 @@ export const ImportExcelModal: React.FC<ImportExcelModalProps> = ({
         'Catatan': 'Siswa Baru Jalur Prestasi'
       },
       {
-        'Nomor DU': 'DU-2026-100',
+        'Nomor DU': 'DU-B/002',
         'Nama Lengkap': 'Nabila Salsabila',
         'Jenis Kelamin': 'P',
         'Tempat Lahir': 'Bandung',
@@ -114,7 +114,7 @@ export const ImportExcelModal: React.FC<ImportExcelModalProps> = ({
           };
 
           const nama = getVal(['nama', 'namalengkap', 'namasiswa']);
-          const nomorDU = getVal(['nomordu', 'du', 'nodu', 'nomordaftarulang']) || `DU-2026-${100 + index}`;
+          const nomorDU = getVal(['nomordu', 'du', 'nodu', 'nomordaftarulang']) || `DU-A/${String(100 + index).padStart(3, '0')}`;
           const nik = getVal(['nik', 'nonik', 'nomornik']) || '3201000000000000';
           const jenisKelaminRaw = getVal(['jeniskelamin', 'jk', 'lp', 'gender']);
           const jenisKelamin: 'L' | 'P' = jenisKelaminRaw.toUpperCase().startsWith('P') ? 'P' : 'L';
