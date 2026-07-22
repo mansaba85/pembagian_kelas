@@ -7,7 +7,6 @@ export interface Student {
   tempatLahir: string;
   tanggalLahir: string;
   kelas: string;
-  waliKelas: string;
   catatan?: string;
 }
 
@@ -64,6 +63,4 @@ export interface ExcelImportRow {
   NIK?: string;
   kelas?: string;
   'Kelas'?: string;
-  waliKelas?: string;
-  'Wali Kelas'?: string;
 }

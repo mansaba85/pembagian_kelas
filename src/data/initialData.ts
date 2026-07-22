@@ -67,7 +67,6 @@ export const initialStudents: Student[] = [
     tempatLahir: 'Jakarta',
     tanggalLahir: '2010-04-15',
     kelas: 'X-IPA 1',
-    waliKelas: 'Dra. Endang Sri Wahyuni, M.Si.',
     catatan: 'Siswa Berprestasi Jalur Zonasi Utama'
   },
   {
@@ -79,7 +78,6 @@ export const initialStudents: Student[] = [
     tempatLahir: 'Bandung',
     tanggalLahir: '2010-08-12',
     kelas: 'X-IPA 1',
-    waliKelas: 'Dra. Endang Sri Wahyuni, M.Si.',
     catatan: 'Peserta OSN Matematika SMP'
   },
   {
@@ -91,7 +89,6 @@ export const initialStudents: Student[] = [
     tempatLahir: 'Surakarta',
     tanggalLahir: '2010-01-19',
     kelas: 'X-IPA 2',
-    waliKelas: 'Bambang Sukoco, S.Pd., M.T.',
     catatan: 'Ketua OSIS SMP Negeri 1'
   },
   {
@@ -103,7 +100,6 @@ export const initialStudents: Student[] = [
     tempatLahir: 'Bogor',
     tanggalLahir: '2010-11-25',
     kelas: 'X-IPA 2',
-    waliKelas: 'Bambang Sukoco, S.Pd., M.T.',
     catatan: 'Anggota Paskibra Sekolah'
   },
   {
@@ -115,7 +111,6 @@ export const initialStudents: Student[] = [
     tempatLahir: 'Depok',
     tanggalLahir: '2010-03-03',
     kelas: 'X-IPS 1',
-    waliKelas: 'Siti Nurhaliza, S.E., M.Pd.',
     catatan: 'Jalur Prestasi Olahraga Basket'
   },
   {
@@ -127,7 +122,6 @@ export const initialStudents: Student[] = [
     tempatLahir: 'Bekasi',
     tanggalLahir: '2010-07-07',
     kelas: 'X-IPS 1',
-    waliKelas: 'Siti Nurhaliza, S.E., M.Pd.',
     catatan: 'Peraih Juara Debat Bahasa Inggris'
   },
   {
@@ -139,7 +133,6 @@ export const initialStudents: Student[] = [
     tempatLahir: 'Semarang',
     tanggalLahir: '2010-09-14',
     kelas: 'X-IPS 2',
-    waliKelas: 'Ahmad Fauzi, S.Sos., M.Si.',
     catatan: 'Jalur Zonasi Terdekat'
   },
   {
@@ -151,7 +144,6 @@ export const initialStudents: Student[] = [
     tempatLahir: 'Yogyakarta',
     tanggalLahir: '2010-10-10',
     kelas: 'X-IPS 2',
-    waliKelas: 'Ahmad Fauzi, S.Sos., M.Si.',
     catatan: 'Juara Paduan Suara'
   },
   {
@@ -163,7 +155,6 @@ export const initialStudents: Student[] = [
     tempatLahir: 'Malang',
     tanggalLahir: '2010-02-22',
     kelas: 'X-IPA 1',
-    waliKelas: 'Dra. Endang Sri Wahyuni, M.Si.',
     catatan: 'Penerima Beasiswa Prestasi'
   },
   {
@@ -175,7 +166,6 @@ export const initialStudents: Student[] = [
     tempatLahir: 'Tangerang',
     tanggalLahir: '2010-12-21',
     kelas: 'X-IPA 2',
-    waliKelas: 'Bambang Sukoco, S.Pd., M.T.',
     catatan: 'Anggota Pramuka Bantara'
   },
   {
@@ -187,7 +177,6 @@ export const initialStudents: Student[] = [
     tempatLahir: 'Cirebon',
     tanggalLahir: '2010-06-05',
     kelas: 'X-IPS 1',
-    waliKelas: 'Siti Nurhaliza, S.E., M.Pd.',
     catatan: 'Jalur Reguler'
   },
   {
@@ -199,7 +188,6 @@ export const initialStudents: Student[] = [
     tempatLahir: 'Sukabumi',
     tanggalLahir: '2010-05-03',
     kelas: 'X-IPS 2',
-    waliKelas: 'Ahmad Fauzi, S.Sos., M.Si.',
     catatan: 'Hafizah Al-Qur\'an 5 Juz'
   }
 ];

@@ -40,7 +40,6 @@ export const ImportExcelModal: React.FC<ImportExcelModalProps> = ({
         'Tanggal Lahir': '2010-06-15',
         'NIK': '3201021506100099',
         'Kelas Dituju': 'X-IPA 1',
-        'Wali Kelas': 'Dra. Endang Sri Wahyuni, M.Si.',
         'Catatan': 'Siswa Baru Jalur Prestasi'
       },
       {
@@ -51,7 +50,6 @@ export const ImportExcelModal: React.FC<ImportExcelModalProps> = ({
         'Tanggal Lahir': '2010-08-20',
         'NIK': '3201026008100100',
         'Kelas Dituju': 'X-IPS 1',
-        'Wali Kelas': 'Siti Nurhaliza, S.E., M.Pd.',
         'Catatan': 'Siswa Baru Jalur Zonasi'
       }
     ];
@@ -67,8 +65,7 @@ export const ImportExcelModal: React.FC<ImportExcelModalProps> = ({
       { wch: 15 },
       { wch: 20 },
       { wch: 15 },
-      { wch: 30 },
-      { wch: 25 }
+      { wch: 30 }
     ];
     worksheet['!cols'] = wscols;
 
@@ -124,14 +121,6 @@ export const ImportExcelModal: React.FC<ImportExcelModalProps> = ({
           const tempatLahir = getVal(['tempatlahir', 'tempat', 'kotalahir']) || 'Kota';
           const tanggalLahir = getVal(['tanggallahir', 'tgl lahir', 'tgllahir']) || '2010-01-01';
           const kelas = getVal(['kelas', 'kelasdituju', 'kelasalokasi']) || 'X-IPA 1';
-
-          // Match default Wali Kelas if present or look up from classes
-          let waliKelas = getVal(['walikelas', 'wali', 'guru']);
-          if (!waliKelas) {
-            const matchedCls = classes.find(c => c.namaKelas.toLowerCase() === kelas.toLowerCase());
-            waliKelas = matchedCls ? matchedCls.waliKelas : 'Dra. Endang Sri Wahyuni, M.Si.';
-          }
-
           const catatan = getVal(['catatan', 'keterangan', 'jalur']) || 'Siswa Import Excel';
 
           return {
@@ -143,7 +132,6 @@ export const ImportExcelModal: React.FC<ImportExcelModalProps> = ({
             tempatLahir,
             tanggalLahir,
             kelas,
-            waliKelas,
             catatan
           };
         });
@@ -281,7 +269,6 @@ export const ImportExcelModal: React.FC<ImportExcelModalProps> = ({
                       <th className="p-2.5">L/P</th>
                       <th className="p-2.5">Tempat, Tgl Lahir</th>
                       <th className="p-2.5">Kelas Dituju</th>
-                      <th className="p-2.5">Wali Kelas</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-200">
@@ -293,7 +280,6 @@ export const ImportExcelModal: React.FC<ImportExcelModalProps> = ({
                         <td className="p-2.5">{s.jenisKelamin}</td>
                         <td className="p-2.5">{s.tempatLahir}, {s.tanggalLahir}</td>
                         <td className="p-2.5 font-bold text-slate-800">{s.kelas}</td>
-                        <td className="p-2.5 text-slate-600">{s.waliKelas}</td>
                       </tr>
                     ))}
                   </tbody>

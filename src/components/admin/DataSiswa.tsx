@@ -55,7 +55,6 @@ export const DataSiswa: React.FC<DataSiswaProps> = ({
   const [tempatLahir, setTempatLahir] = useState('');
   const [tanggalLahir, setTanggalLahir] = useState('2010-01-01');
   const [kelas, setKelas] = useState('');
-  const [waliKelas, setWaliKelas] = useState('');
   const [catatan, setCatatan] = useState('');
 
   // Filtering logic
@@ -100,8 +99,6 @@ export const DataSiswa: React.FC<DataSiswaProps> = ({
     setTanggalLahir('2010-05-15');
     const defaultClass = classes[0] ? classes[0].namaKelas : 'X-IPA 1';
     setKelas(defaultClass);
-    const defaultWali = classes[0] ? classes[0].waliKelas : 'Dra. Endang Sri Wahyuni, M.Si.';
-    setWaliKelas(defaultWali);
     setCatatan('Siswa Baru Manual');
     setIsModalOpen(true);
   };
@@ -116,18 +113,13 @@ export const DataSiswa: React.FC<DataSiswaProps> = ({
     setTempatLahir(student.tempatLahir);
     setTanggalLahir(student.tanggalLahir);
     setKelas(student.kelas);
-    setWaliKelas(student.waliKelas);
     setCatatan(student.catatan || '');
     setIsModalOpen(true);
   };
 
-  // When class changes in form, auto fill wali kelas
+  // When class changes in form
   const handleClassSelectChange = (newKelas: string) => {
     setKelas(newKelas);
-    const foundCls = classes.find(c => c.namaKelas.toLowerCase() === newKelas.toLowerCase());
-    if (foundCls) {
-      setWaliKelas(foundCls.waliKelas);
-    }
   };
 
   // Delete Single Student with SweetAlert confirm
@@ -170,7 +162,6 @@ export const DataSiswa: React.FC<DataSiswaProps> = ({
       'Tempat Lahir': s.tempatLahir,
       'Tanggal Lahir': s.tanggalLahir,
       'Kelas': s.kelas,
-      'Wali Kelas': s.waliKelas,
       'Catatan': s.catatan || ''
     }));
 
@@ -201,7 +192,6 @@ export const DataSiswa: React.FC<DataSiswaProps> = ({
         tempatLahir: tempatLahir.trim(),
         tanggalLahir,
         kelas,
-        waliKelas,
         catatan: catatan.trim()
       };
       onUpdateStudent(updated);
@@ -216,7 +206,6 @@ export const DataSiswa: React.FC<DataSiswaProps> = ({
         tempatLahir: tempatLahir.trim(),
         tanggalLahir,
         kelas,
-        waliKelas,
         catatan: catatan.trim()
       };
       onAddStudent(newStudent);
@@ -340,7 +329,6 @@ export const DataSiswa: React.FC<DataSiswaProps> = ({
                 <th className="p-3.5">L/P</th>
                 <th className="p-3.5">Tempat & Tgl Lahir</th>
                 <th className="p-3.5">Hasil Kelas</th>
-                <th className="p-3.5">Wali Kelas</th>
                 <th className="p-3.5 text-center">Aksi</th>
               </tr>
             </thead>
@@ -382,7 +370,6 @@ export const DataSiswa: React.FC<DataSiswaProps> = ({
                           {s.kelas}
                         </span>
                       </td>
-                      <td className="p-3.5 text-slate-700 font-medium">{s.waliKelas}</td>
                       <td className="p-3.5 text-center">
                         <div className="flex items-center justify-center gap-1">
                           <button
@@ -512,16 +499,6 @@ export const DataSiswa: React.FC<DataSiswaProps> = ({
                       <option key={c.id} value={c.namaKelas}>{c.namaKelas}</option>
                     ))}
                   </select>
-                </div>
-
-                <div className="space-y-1">
-                  <label className="block font-semibold text-slate-700">Wali Kelas Automatis</label>
-                  <input
-                    type="text"
-                    readOnly
-                    value={waliKelas}
-                    className="w-full bg-slate-100 border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium text-slate-700 outline-hidden"
-                  />
                 </div>
               </div>
 
