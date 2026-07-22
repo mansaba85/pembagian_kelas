@@ -114,6 +114,38 @@ export async function initMySQLDatabase() {
     await ensureColumnExists('kelas', 'kuota', 'INT DEFAULT 36');
     await ensureColumnExists('kelas', 'keterangan', 'TEXT');
 
+    // Helper to relax legacy NOT NULL constraints on non-primary columns without default values
+    const relaxLegacyNotNull = async (tableName: string) => {
+      try {
+        const [notNullCols]: any = await db.query(
+          `SELECT COLUMN_NAME
+           FROM INFORMATION_SCHEMA.COLUMNS
+           WHERE TABLE_SCHEMA = DATABASE()
+             AND TABLE_NAME = ?
+             AND IS_NULLABLE = 'NO'
+             AND COLUMN_KEY != 'PRI'
+             AND EXTRA NOT LIKE '%auto_increment%'
+             AND COLUMN_DEFAULT IS NULL`,
+          [tableName]
+        );
+        if (Array.isArray(notNullCols)) {
+          for (const colRow of notNullCols) {
+            const colName = colRow.COLUMN_NAME;
+            console.log(`🔧 Relaxing legacy NOT NULL constraint on '${tableName}.${colName}'...`);
+            try {
+              await db.query(`ALTER TABLE \`${tableName}\` MODIFY COLUMN \`${colName}\` VARCHAR(255) NULL DEFAULT NULL`);
+            } catch (err: any) {
+              console.warn(`⚠️ Warning relaxing column ${tableName}.${colName}:`, err.message);
+            }
+          }
+        }
+      } catch (err: any) {
+        console.warn(`⚠️ Warning checking NOT NULL columns for ${tableName}:`, err.message);
+      }
+    };
+
+    await relaxLegacyNotNull('kelas');
+
     // Table: siswa
     await db.query(`
       CREATE TABLE IF NOT EXISTS \`siswa\` (
@@ -138,6 +170,7 @@ export async function initMySQLDatabase() {
     await ensureColumnExists('siswa', 'tanggalLahir', 'VARCHAR(50)');
     await ensureColumnExists('siswa', 'kelas', 'VARCHAR(100)');
     await ensureColumnExists('siswa', 'catatan', 'TEXT');
+    await relaxLegacyNotNull('siswa');
 
     // Table: pengguna
     await db.query(`
@@ -161,6 +194,7 @@ export async function initMySQLDatabase() {
     await ensureColumnExists('pengguna', 'role', 'VARCHAR(50) NOT NULL DEFAULT \'Super Admin\'');
     await ensureColumnExists('pengguna', 'status', 'VARCHAR(20) DEFAULT \'Aktif\'');
     await ensureColumnExists('pengguna', 'terakhirLogin', 'VARCHAR(100)');
+    await relaxLegacyNotNull('pengguna');
 
     // Table: pengaturan
     await db.query(`
@@ -200,6 +234,7 @@ export async function initMySQLDatabase() {
     await ensureColumnExists('pengaturan', 'tanggalPengumuman', 'VARCHAR(100)');
     await ensureColumnExists('pengaturan', 'kotaSekolah', 'VARCHAR(100)');
     await ensureColumnExists('pengaturan', 'logoSekolah', 'LONGTEXT');
+    await relaxLegacyNotNull('pengaturan');
 
     // Seed classes if empty
     const [clsRows]: any = await db.query(`SELECT COUNT(*) as count FROM \`kelas\`;`);
