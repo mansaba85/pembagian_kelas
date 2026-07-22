@@ -163,8 +163,8 @@ export const PrintableClassCard: React.FC<PrintableClassCardProps> = ({
               KELAS {student.kelas}
             </div>
             <div className="text-xs text-slate-700 font-medium space-y-0.5 mt-2 pt-2 border-t border-emerald-200">
-              <p>Wali Kelas: <span className="font-bold text-slate-900">{student.waliKelas}</span></p>
-              {classDetail && <p>Ruang Belajar: <span className="font-semibold text-slate-800">{classDetail.ruang}</span></p>}
+              <p>Wali Kelas: <span className="font-bold text-slate-900">{classDetail?.waliKelas || 'Belum Ditentukan'}</span></p>
+              <p>Ruang Belajar: <span className="font-semibold text-slate-800">{classDetail?.ruang || 'Belum Ditentukan'}</span></p>
             </div>
           </div>
 

@@ -83,9 +83,23 @@ export const StudentAnnouncement: React.FC<StudentAnnouncementProps> = ({
     handleSearch(undefined, duNumber);
   };
 
+  const normalizeClassName = (name?: string) => (name || '').trim().toLowerCase().replace(/[^a-z0-9]/g, '');
+
   const foundClassDetail = foundStudent
-    ? classes.find(c => c.namaKelas.toLowerCase() === foundStudent.kelas.toLowerCase())
+    ? classes.find(c => {
+        const cLower = c.namaKelas.trim().toLowerCase();
+        const sLower = foundStudent.kelas.trim().toLowerCase();
+        if (cLower === sLower) return true;
+        const cClean = normalizeClassName(c.namaKelas);
+        const sClean = normalizeClassName(foundStudent.kelas);
+        if (cClean && cClean === sClean) return true;
+        return cClean && sClean && (cClean.includes(sClean) || sClean.includes(cClean));
+      })
     : undefined;
+
+  const classStudentsCount = foundStudent
+    ? students.filter(s => normalizeClassName(s.kelas) === normalizeClassName(foundStudent.kelas)).length
+    : 0;
 
   return (
     <div className="min-h-screen bg-slate-900 text-slate-100 flex flex-col font-sans selection:bg-emerald-500 selection:text-white">
@@ -317,20 +331,16 @@ export const StudentAnnouncement: React.FC<StudentAnnouncementProps> = ({
                     <div className="mt-4 pt-4 border-t border-slate-700/80 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 text-xs text-slate-300 text-left sm:text-center">
                       <div className="bg-slate-900/60 p-2.5 rounded-xl border border-slate-800">
                         <span className="block text-[10px] text-slate-400 uppercase font-semibold">Wali Kelas</span>
-                        <strong className="text-white text-sm">{foundStudent.waliKelas}</strong>
+                        <strong className="text-white text-sm">{foundClassDetail?.waliKelas || 'Belum Ditentukan'}</strong>
                       </div>
-                      {foundClassDetail && (
-                        <>
-                          <div className="bg-slate-900/60 p-2.5 rounded-xl border border-slate-800">
-                            <span className="block text-[10px] text-slate-400 uppercase font-semibold">Lokasi Ruangan</span>
-                            <strong className="text-blue-300 text-sm">{foundClassDetail.ruang}</strong>
-                          </div>
-                          <div className="bg-slate-900/60 p-2.5 rounded-xl border border-slate-800 col-span-1 sm:col-span-2 md:col-span-1">
-                            <span className="block text-[10px] text-slate-400 uppercase font-semibold">Kapasitas Kelas</span>
-                            <strong className="text-emerald-400 text-sm">{foundClassDetail.jumlahSiswa} / {foundClassDetail.kuota} Siswa</strong>
-                          </div>
-                        </>
-                      )}
+                      <div className="bg-slate-900/60 p-2.5 rounded-xl border border-slate-800">
+                        <span className="block text-[10px] text-slate-400 uppercase font-semibold">Lokasi Ruangan</span>
+                        <strong className="text-blue-300 text-sm">{foundClassDetail?.ruang || 'Belum Ditentukan'}</strong>
+                      </div>
+                      <div className="bg-slate-900/60 p-2.5 rounded-xl border border-slate-800 col-span-1 sm:col-span-2 md:col-span-1">
+                        <span className="block text-[10px] text-slate-400 uppercase font-semibold">Kapasitas Kelas</span>
+                        <strong className="text-emerald-400 text-sm">{classStudentsCount} / {foundClassDetail?.kuota ?? 36} Siswa</strong>
+                      </div>
                     </div>
                   </div>
 
